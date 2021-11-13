@@ -1,0 +1,29 @@
+body {
+    margin: 0px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+button{
+    height: 30px;
+    width: 90px;
+    border: 0px solid;
+    border-radius: 5px;
+}
+
+.hitbtn{
+    background-color: mediumaquamarine;
+}
+.standbtn{
+    background-color: salmon;
+}
+
+.header {
+  height: 30px;
+  width: 100%;
+  background-color: teal;
+  position: sticky;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+}
