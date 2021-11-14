@@ -80,21 +80,31 @@ h1 {
  .card{
     justify-content: center;
     align-items: center;
-     background-color: blanchedalmond;
-     height: 13rem;
-     width: 8rem;
-     min-width: 3rem;
-     border: 1px solid black;
-     border-radius: .5rem;
-     display: flex;
-     
+    background-color: blanchedalmond;
+    height: 13rem;
+    width: 8rem;
+    min-width: 8rem;
+    border: 1px solid black;
+    border-radius: .5rem;
+    display: flex;
+    margin-right: .5rem;
+    margin-left: .5rem;
+ }
+
+ .black{
+     color: black;
+ }
+ .red{
+     color: red;
  }
 
    .cards{
      display: flex;
      flex-direction: row;
-     align-content: center;
-     max-width: 35em;
+     justify-content: center;
+     /* max-width: 32rem; */
+     overflow-x: auto;
+     overflow-y: hidden;
   } 
 
  .cornerval{
