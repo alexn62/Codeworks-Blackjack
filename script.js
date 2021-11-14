@@ -1,152 +1,279 @@
-
 const NUMBER_OF_DECKS = 4;
-
 
 let userCards = [];
 let playerScore = 0;
-let dealerCards=[];
+let dealerCards = [];
 let dealerScore = 0;
 let deck = [];
+let dealerSecondCard;
+
+let money = 100;
+const BET = 10;
 
 const resetCards = () => {
-    deck = Array.from({ length: 13 * 4 * NUMBER_OF_DECKS }, (_, i) =>
-        (i % 13) + 1 === 1
-            ? "A"
-            : (i % 13) + 1 === 11
-                ? "J"
-                : (i % 13) + 1 === 12
-                    ? "Q"
-                    : (i % 13) + 1 === 13
-                        ? "K"
-                        : ((i % 13) + 1).toString()
-                        // : "A"
-    );
+  deck = Array.from({ length: 52 * NUMBER_OF_DECKS }, (_, i) => {
+    let newCard = {
+      color:
+        i < (52 * NUMBER_OF_DECKS) / 4
+          ? "hearts"
+          : i < (52 * NUMBER_OF_DECKS) / 2
+          ? "spades"
+          : i < (52 * NUMBER_OF_DECKS) / 2 + (52 * NUMBER_OF_DECKS) / 4
+          ? "diamonds"
+          : "clubs",
+    };
+    if ((i % 13) + 1 === 1) {
+      newCard["symbol"] = "A";
+      newCard["val"] = 11;
+    } else if ((i % 13) + 1 === 11) {
+      newCard["symbol"] = "J";
+      newCard["val"] = 10;
+    } else if ((i % 13) + 1 === 12) {
+      newCard["symbol"] = "Q";
+      newCard["val"] = 10;
+    } else if ((i % 13) + 1 === 13) {
+      newCard["symbol"] = "K";
+      newCard["val"] = 10;
+    } else {
+      //   newCard["symbol"] = "A";
+      newCard["symbol"] = ((i % 13) + 1).toString();
+      //   newCard["val"] = 11;
+      newCard["val"] = (i % 13) + 1;
+    }
+    return newCard;
+  });
 };
-
-const getVal = (val) =>
-    val === "A"
-        ? 11
-        : val === "J" || val === "Q" || val === "K"
-            ? 10
-            : parseInt(val);
 
 const drawFromDeck = () => {
-    let random = Math.floor(Math.random() * deck.length);
-    let val = deck[random];
-    deck.splice(random, 1);
-    return [val,random];
+  let random = Math.floor(Math.random() * deck.length);
+  let drawnCard = deck[random];
+  deck.splice(random, 1);
+  return drawnCard;
 };
 
-const createCard = (val,random) => {
-    let cornerVal = $("<div>");
-    cornerVal.text(val);
-    cornerVal.addClass(
-        `cornerval ${random > deck.length / 2 ? "red" : "black"}`
-    );
+const createCard = (card) => {
+  let cornerVal = $("<div>");
+  cornerVal.text(card.symbol);
+  cornerVal.addClass(
+    `cornerval ${
+      card.color === "hearts" || card.color === "diamonds" ? "red" : "black"
+    }`
+  );
 
-    let centerVal = $("<div>");
-    centerVal.text(val);
-    centerVal.addClass(
-        `centerval ${random > deck.length / 2 ? "red" : "black"}`
-    );
+  let centerVal = $("<div>");
+  centerVal.text(card.symbol);
+  centerVal.addClass(
+    `centerval ${
+      card.color === "hearts" || card.color === "diamonds" ? "red" : "black"
+    }`
+  );
 
-    let cornerValBottom = $("<div>");
-    cornerValBottom.text(val);
-    cornerValBottom.addClass(
-        `cornervalbottom ${random > deck.length / 2 ? "red" : "black"}`
-    );
+  let cornerValBottom = $("<div>");
+  cornerValBottom.text(card.symbol);
+  cornerValBottom.addClass(
+    `cornervalbottom ${
+      card.color === "hearts" || card.color === "diamonds" ? "red" : "black"
+    }`
+  );
 
-    let card = $("<div>")
-        .addClass("card")
-        .html(cornerVal)
-        .append(centerVal)
-        .append(cornerValBottom);
-        return card;
-}
-const disableButtons = () =>{
-    $("#hit").prop('disabled', true);
-    $("#stand").prop('disabled', true);
-}
+  let color = $("<div>");
+  color.text(
+    card.color === "hearts"
+      ? "♥"
+      : card.color === "diamonds"
+      ? "♦"
+      : card.color === "spades"
+      ? "♠"
+      : "♣"
+  );
+  color.addClass(
+    `cornerval ${
+      card.color === "hearts" || card.color === "diamonds" ? "red" : "black"
+    }`
+  );
+  let color2 = $("<div>");
+  color2.text(
+    card.color === "hearts"
+      ? "♥"
+      : card.color === "diamonds"
+      ? "♦"
+      : card.color === "spades"
+      ? "♠"
+      : "♣"
+  );
+  color2.addClass(
+    `cornervalbottom ${
+      card.color === "hearts" || card.color === "diamonds" ? "red" : "black"
+    }`
+  );
+
+  const cardEl = $("<div>")
+    .addClass("card")
+    .append(cornerVal)
+    .append(color)
+    .append(centerVal)
+    .append(color2)
+    .append(cornerValBottom);
+  return cardEl;
+};
+
+const disableButtons = () => {
+  $("#hit").prop("disabled", true);
+  $("#stand").prop("disabled", true);
+};
 
 const hit = () => {
-    const [cardValue,randomValue] = drawFromDeck();
-    const card = createCard(cardValue, randomValue);
-    $("#playerCards").append(card);
-    userCards.push(cardValue);
+  const newCard = drawFromDeck();
+  const card = createCard(newCard);
+  $("#playerCards").append(card);
+  userCards.push(newCard);
+  let acesCount = 0;
 
-    let acesCount = 0;
-    for (const el of userCards){
-        if (el === 'A'){
-            acesCount++;
-        }
+  for (const el of userCards) {
+    if (el.symbol === "A") {
+      acesCount++;
     }
-    let userScore = [userCards.length != 0 ? parseInt(userCards.reduce((a,b)=> getVal(a)+getVal(b),0)) : 0];
+  }
 
-    if (userCards.length === 2 && userScore[0]===21){
-        setTimeout( ()=> { alert("BLACKJACK You win!!"); }, 1);
-        disableButtons();
-    }
+  let userScore = [userCards.reduce((a, b) => a + b.val, 0)];
 
-    for (let i = 1; i <= acesCount; i++){
-        userScore.push(userScore[0]-10*i);
-    }
+  if (userCards.length === 2 && userScore[0] === 21) {
+    $("#userScore").text("Blackjack - You win!");
+    setTimeout(() => {
+      alert("BLACKJACK You win!!");
+      money += 2 * BET;
+      $("#money").text(money);
+    }, 1);
+    disableButtons();
+    return;
+  }
 
-    let scores = userScore.filter(el => el <= 21);
-    playerScore = scores.length < 1 ? Math.min(...userScore) : Math.max(...scores);
-    $("#userScore").text(`${scores.length < 1 ? Math.min(...userScore) : scores.join(' or ')}`);
-    if (Math.min(...userScore) > 21){
-        setTimeout( ()=> { alert("You bust"); }, 1);
-        disableButtons();
+  for (let i = 1; i <= acesCount; i++) {
+    userScore.push(userScore[0] - 10 * i);
+  }
 
-    }
+  let scores = userScore.filter((el) => el <= 21);
+  playerScore =
+    scores.length < 1 ? Math.min(...userScore) : Math.max(...scores);
+
+  $("#userScore").text(
+    `${scores.length < 1 ? Math.min(...userScore) : scores.join(" or ")}`
+  );
+
+  if (Math.min(...userScore) > 21) {
+    setTimeout(() => {
+      alert("You bust");
+      money -= BET;
+      $("#money").text(money);
+    }, 1);
+    disableButtons();
+  }
 };
 
-const dealerDraw = (first=false) => {
-    const [cardValue,randomValue] = drawFromDeck();
-    const card = createCard(cardValue, randomValue);
-    $("#dealerCards").append(card);
-    dealerCards.push(cardValue);
-    dealerScore = dealerCards.length != 0 ? parseInt(dealerCards.reduce((a,b)=> getVal(a)+getVal(b),0)) : 0;
-    $("#dealerScore").text(dealerScore);
-    if (first===false){
-        if (dealerScore >= 17){
-            setTimeout( ()=> { alert(`${dealerScore  > 21 ? 'Dealer bust! You win!' : dealerScore > playerScore ? 'Dealer wins :(' : dealerScore < playerScore ? 'You win!!' : 'Draw'}`); }, 10);
-            return;
-        }
-        else{
-            setTimeout( ()=> {  dealerDraw(false); }, 1000);
-           
-        }
+const dealerDraw = (first = false) => {
+  const newCard = drawFromDeck();
+  const card = createCard(newCard);
+  $("#dealerCards").append(card);
+  dealerCards.push(newCard);
+  let acesCount = 0;
+
+  for (const el of dealerCards) {
+    if (el.symbol === "A") {
+      acesCount++;
     }
+  }
+
+  let dealerScore = [dealerCards.reduce((a, b) => a + b.val, 0)];
+
+  if (dealerCards.length === 2 && dealerScore[0] === 21) {
+    $("#dealerScore").text("Blackjack - You lose :(");
+    setTimeout(() => {
+      alert("BLACKJACK You lose :9");
+      money -= BET;
+      $("#money").text(money);
+    }, 1);
+    disableButtons();
+    return;
+  }
+
+  for (let i = 1; i <= acesCount; i++) {
+    dealerScore.push(dealerScore[0] - 10 * i);
+  }
+
+  let scores = dealerScore.filter((el) => el <= 21);
+
+  $("#dealerScore").text(
+    `${scores.length < 1 ? Math.min(...dealerScore) : scores.join(" or ")}`
+  );
+
+  if (Math.min(...dealerScore) > 21) {
+    setTimeout(() => {
+      alert("Dealer bust");
+      money += BET;
+      $("#money").text(money);
+    }, 1);
+    disableButtons();
+    return;
+  }
+  if (Math.min(...dealerScore) < 17 && first === false) {
+    setTimeout(() => {
+      dealerDraw();
+    }, 1000);
+  }
+  if (Math.min(...dealerScore) >= 17) {
+    setTimeout(() => {
+      alert(
+        `${
+          Math.min(...dealerScore) == playerScore
+            ? "Draw"
+            : Math.min(...dealerScore) < playerScore
+            ? "You win"
+            : "You lose"
+        }`
+      );
+    }, 1);
+    disableButtons();
+    Math.min(...dealerScore) == playerScore
+      ? (money += 0)
+      : Math.min(...dealerScore) < playerScore
+      ? (money += BET)
+      : money - +BET;
+    $("#money").text(money);
+
+    return;
+  }
 };
 
 let hitBtn = document.getElementById("hit");
 hitBtn.addEventListener("click", hit);
 
 const resetGame = () => {
-    $("#playerCards").empty();
-    $("#dealerCards").empty();
-    resetCards();
-    userCards = [];
-    userScore = 0;
-    dealerCards = [];
-    dealerScore = 0;
-    $("#userScore").text(userScore);
-    $("#dealerScore").text(dealerScore);
-    $("#hit").prop('disabled', false);
-    $("#stand").prop('disabled', false);
-    dealerDraw(true);
-    hit();
+  $("#playerCards").empty();
+  $("#dealerCards").empty();
+  resetCards();
+  userCards = [];
+  userScore = 0;
+  dealerCards = [];
+  dealerScore = 0;
+  $("#userScore").text(userScore);
+  $("#dealerScore").text(dealerScore);
+  $("#money").text(money);
+
+  $("#hit").prop("disabled", false);
+  $("#stand").prop("disabled", false);
+  dealerDraw(true);
+  hit();
+  hit();
 };
 
 let resetBtn = document.getElementById("reset");
 resetBtn.addEventListener("click", resetGame);
 
-const stand = ()=> {
-    $("#hit").prop('disabled', true);
-    $("#stand").prop('disabled', true);
-    dealerDraw(false);
-}
+const stand = () => {
+  $("#hit").prop("disabled", true);
+  $("#stand").prop("disabled", true);
+  dealerDraw(false);
+};
 
 let standBtn = document.getElementById("stand");
 standBtn.addEventListener("click", stand);
@@ -154,4 +281,3 @@ standBtn.addEventListener("click", stand);
 // initialize game
 
 resetGame();
-
