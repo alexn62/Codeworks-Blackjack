@@ -19,20 +19,16 @@
         <div class="scoreboard">
             <p>Your Score:</p>
             <p id="userScore">0</p>
+            <button class="resetBtn" id="reset">Reset</button>
             <p>Dealer's Score:</p>
+            <p id="dealerScore">0</p>
         </div>
         <div class="divider"></div>
-        <div class="cards">
-            <div class="card">
-                <div class="cornerval">K</div>
-                <div class="centerval"> K </div>
-                <div class="cornervalbottom">K</div>
-            </div>
-           
-        </div>
+        <div class="cards" id="dealerCards"></div>
+        
         <div class="hitmiss">
             <button class="hitbtn" id="hit">Hit</button>
-            <button class="standbtn">Stand</button>
+            <button class="standbtn" id="stand" >Stand</button>
         </div>
         <div class="cards" id="playerCards"></div>
     </div>
