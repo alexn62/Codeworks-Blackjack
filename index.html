@@ -12,38 +12,43 @@
 </head>
 
 <body>
-    <!-- <div class="backdrop">
-        <div class="modal">
-            <h1>Congrats!</h1>
-            <p>You win.. Play again?</p>
-            <div class="playAgainButtons">
-                <button class="resetBtn" id="cancelBtn">No</button>
-                <button class="hitbtn" id="playAgainBtn">Yes</button>
-            </div>
-
-        </div>
-    </div> -->
     <h1 class="header">Blackjack</h1>
     <div class="maingame">
-
         <div class="scoreboard">
-
-            <p>Your Money:</p>
-            <p id="money">0</p>
-            <p>Your Score:</p>
-            <p id="userScore">0</p>
-            <button class="resetBtn" id="reset">Reset</button>
-            <p>Dealer's Score:</p>
-            <p id="dealerScore">0</p>
+            <div class="headerBlock">
+                <p>Your Money: $&nbsp;</p>
+                <p id="money">0</p>
+            </div>
+            <div class="headerBlock">
+                <p>Bet size:&nbsp;</p>
+                <div id="decreaseBet" class="betBtn">-</div>
+                <p id="betSize">10</p>
+                <div id="increaseBet" class="betBtn">+</div>
+                
+            </div>
+            <div class="headerBlock">
+                <p>Your Score:&nbsp;</p>
+                <p id="userScore">0</p>
+            </div>
+            <div class="headerBlock">
+                <p>Dealer's Score:&nbsp;</p>
+                <p id="dealerScore">0</p>
+            </div>
         </div>
         <div class="divider"></div>
-        <div class="cards" id="dealerCards"></div>
+        <div class="cards" id="dealerCards">
+            <div class="overlay">D E A L E R</div>
+
+        </div>
 
         <div class="hitmiss">
             <button class="hitbtn" id="hit">Hit</button>
             <button class="standbtn" id="stand">Stand</button>
         </div>
-        <div class="cards" id="playerCards"></div>
+        <div class="cards" id="playerCards">
+            <div class="overlay">Y O U</div>
+
+        </div>
     </div>
 
 </body>

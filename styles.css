@@ -1,6 +1,7 @@
 body,
 p {
-    margin: 0px;
+    padding: 0;
+    margin: 0;
     background-color: beige;
     font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
 }
@@ -98,6 +99,7 @@ button {
 }
 
 .card {
+    z-index: 1;
     justify-content: center;
     align-items: center;
     background-color: blanchedalmond;
@@ -120,8 +122,9 @@ button {
 }
 
 .cards {
+    position: relative;
+    z-index: 0;
     display: flex;
-    justify-content: start;
     overflow-x: auto;
 }
 
@@ -145,6 +148,7 @@ button {
 }
 
 .backdrop {
+    z-index: 3;
     position: absolute;
     height: 100%;
     width: 100%;
@@ -152,6 +156,7 @@ button {
 }
 
 .modal {
+    z-index: 3;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -164,8 +169,38 @@ button {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    text-align: center;
+    padding: 1rem;
 }
 
 .playAgainButtons {
     display: flex;
+}
+
+.overlay {
+    z-index: 2;
+    position: absolute;
+    font-size: xx-large;
+    font-weight: bold;
+    color: rgba(173, 84, 84, 0.3);
+    text-align: left;
+    z-index: -1;
+    margin: -1rem 0 0 -1rem;
+    top: 50%;
+    right: 0;
+}
+
+.headerBlock{
+    display: flex;
+}
+
+.betBtn{
+    height: 20px;
+    width: 20px;
+    border: solid 1px black;
+    border-radius: 50%;
+    text-align: center;
+    cursor: pointer;
+    margin: 0 1rem 0 1rem;
+    user-select: none;
 }
