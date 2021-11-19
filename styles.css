@@ -121,11 +121,8 @@ button {
 
 .cards {
     display: flex;
-    flex-direction: row;
     justify-content: start;
     overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
 }
 
 .cornerval {
