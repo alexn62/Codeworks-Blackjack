@@ -57,7 +57,6 @@ button {
     height: 30px;
     width: 100%;
     background-color: teal;
-    /* position: sticky; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -76,8 +75,8 @@ button {
 
 .maingame {
     width: 70%;
-    max-width: 720px;
-    min-width: 500px;
+    max-width: 1080px;
+    min-width: 720px;
     margin: 0 auto;
 }
 
@@ -109,8 +108,8 @@ button {
     border: 1px solid black;
     border-radius: 0.5rem;
     display: flex;
-    margin-right: 0.5rem;
-    margin-left: 0.5rem;
+    margin: 1rem;    
+    box-shadow: 5px 5px 17px -1px rgba(0,0,0,0.47)    ;
 }
 
 .black {

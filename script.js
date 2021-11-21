@@ -9,10 +9,12 @@ let dealerScores = [];
 
 let deck = [];
 
-let money = 10;
-let BET = 10;
+let money = 100;
+let bet = 10;
 
 const resetCards = () => {
+    // Gets the deck ready with the number of decks hardcoded.
+    // Depending on the position in deck, the card receives, a value, a symbol, and a color.
     deck = Array.from({ length: 52 * NUMBER_OF_DECKS }, (_, i) => {
         let newCard = {
             color:
@@ -45,7 +47,7 @@ const resetCards = () => {
 };
 
 const drawFromDeck = () => {
-    // select a random card from the deck, remove it from the deck, and then return the card
+    // Selects a random card from the deck, removes that card from the deck, and returns it.
     let random = Math.floor(Math.random() * deck.length);
     let drawnCard = deck[random];
     deck.splice(random, 1);
@@ -53,15 +55,20 @@ const drawFromDeck = () => {
 };
 
 const hideBackDrop = () => {
+    // Removes the backdrop and modal from the DOM.
     $("#backdr").remove();
 };
 
 const playAgain = () => {
+    // Hides the backdrop and resets the game.
     hideBackDrop();
     resetGame();
 };
 
 const createBackdrop = (titleText, description, okButtonOnly = false) => {
+    // Creates a DOM-Element that spans over the whole screen and centers a modal window.
+    // Takes in a title and a desription for the modal. 
+    // The parameter okButtonOnly is set to false by default. Setting it to true will display an OK button in place of the Yes and No buttons.
     let backdrop = $("<div>");
     backdrop.attr("id", "backdr");
     backdrop.addClass("backdrop");
@@ -97,6 +104,8 @@ const createBackdrop = (titleText, description, okButtonOnly = false) => {
 };
 
 const createCard = (card) => {
+    // Creates a card DOM-Element.
+    // Takes in a card-object and return the DOM-Element.
     let cornerVal = $("<div>");
     cornerVal.text(card.symbol);
     cornerVal.addClass(
@@ -150,11 +159,14 @@ const createCard = (card) => {
 };
 
 const disableButtons = (hit, stand) => {
+    // Disables the hit and stand buttons, so that a user cannot press these during the dealer's turn.
     $("#hit").prop("disabled", hit);
     $("#stand").prop("disabled", stand);
 };
 
 const updateScore = (card, player) => {
+    // Updates the score(s) for the dealer and player. 
+    // In case there is an ace in the cards, a +10 gets added to the scores.
     player ? playerCards.push(card) : dealerCards.push(card);
     if (player) {
         playerScores = [playerCards.reduce((a, b) => a + b.val, 0)];
@@ -170,6 +182,8 @@ const updateScore = (card, player) => {
 };
 
 const hit = () => {
+    // Called when a user presses the hit button and when the game starts. 
+    // Performs checks for blackjacks and handles aces. 
     const newCard = drawFromDeck();
     const card = createCard(newCard);
     $("#playerCards").append(card);
@@ -177,7 +191,7 @@ const hit = () => {
     if (playerCards.length === 2 && playerScores[1] === 21) {
         $("#userScore").text(playerScores[1]);
         disableButtons(true, true);
-        money += 2 * BET;
+        money += 2 * bet;
         $("#money").text(money);
         createBackdrop("Blackjack!", "You won! Play again?");
         return;
@@ -185,7 +199,7 @@ const hit = () => {
     if (playerScores.every((e) => e > 21)) {
         $("#userScore").text("You bust.");
         disableButtons(true, true);
-        money -= BET;
+        money -= bet;
         $("#money").text(money);
         createBackdrop("You bust!", "You lost! Play again?");
         return;
@@ -208,6 +222,8 @@ const hit = () => {
 
 
 const dealerDraw = (first = false) => {
+    // Called when the dealer draws cards.
+    // As long as the dealer's score is below 17, this function will be called recursively. 
     const newCard = drawFromDeck();
     const card = createCard(newCard);
     $("#dealerCards").append(card);
@@ -215,7 +231,7 @@ const dealerDraw = (first = false) => {
     if (!first) {
         if (dealerScore.every((e) => e > 21)) {
             $("#dealerScore").text("Dealer bust.");
-            money += BET;
+            money += bet;
             $("#money").text(money);
             createBackdrop("Dealer bust!", "You won! Play again?");
             return;
@@ -237,13 +253,13 @@ const dealerDraw = (first = false) => {
                 return;
             }
             if (score < finalPlayerScore) {
-                money += BET;
+                money += bet;
                 $("#money").text(money);
                 createBackdrop("You won!", " Play again?");
                 return;
             }
             if (score > finalPlayerScore) {
-                money -= BET;
+                money -= bet;
                 $("#money").text(money);
                 createBackdrop("You lost!", "Play again?");
                 return;
@@ -262,6 +278,9 @@ const dealerDraw = (first = false) => {
 
 
 const stand = () => {
+    // Called when the user presses the stand-button.
+    // Calculates the user's final score in case there is an ace in the cards.
+    // Moves the action over to the dealer.
     disableButtons(true, true);
     if (playerScores.length > 1) {
         if (playerScores.every((e) => e < 22)) {
@@ -279,12 +298,18 @@ const stand = () => {
 };
 
 const startGame = () => {
+    // Starts the game when the start button is pressed.
+    // Checks the balance and betting size.
+    // The user gets two cards, the dealer draws one.
+    // No more changes to the betting size are allowed after this.
+    // Decreases the money amount temporarily on the DOM.
+    $("#stand").attr('hidden', false);
+    $("#money").text(money-bet);
     if (money <= 0) {
         createBackdrop('Whoops', 'You ran out of money. Please refresh to load up again 🤑🤑🤑', true);
         return;
     }
-    if (BET > money) {
-
+    if (bet > money) {
         createBackdrop('Whoops', 'Please decrease your bet', true);
         return;
     }
@@ -301,10 +326,11 @@ const startGame = () => {
 }
 
 const resetGame = () => {
-
+    // Resets the game to the initial state.
     $("#hit").text('Start');
     $("#hit").off().click(startGame);
     $("#stand").off();
+    $("#stand").attr('hidden', true);
     $("#playerCards").children().not(':first-child').remove();
     $("#dealerCards").children().not(':first-child').remove();
     resetCards();
@@ -313,8 +339,8 @@ const resetGame = () => {
     finalPlayerScore = 0;
     dealerCards = [];
     dealerScore = [];
-    $("#userScore").text(finalPlayerScore);
-    $("#dealerScore").text(dealerScore);
+    $("#userScore").text('0');
+    $("#dealerScore").text('0');
     $("#money").text(money);
     $("#decreaseBet").off().click(() => increaseBet(false));
     $("#increaseBet").off().click(() => increaseBet(true));
@@ -322,11 +348,10 @@ const resetGame = () => {
 };
 
 increaseBet = incr => {
-    if (BET >= money && incr || BET <= 1 && !incr) return;
-    incr ? BET += 1 : BET -= 1;
-    $("#betSize").text(BET);
+    // Increases or decreases the bet accordingly.
+    if (bet >= money && incr || bet <= 1 && !incr) return;
+    incr ? bet += 1 : bet -= 1;
+    $("#betSize").text(bet);
 }
-
-
 
 resetGame();
